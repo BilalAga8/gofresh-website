@@ -117,7 +117,7 @@ export default function ProductPage() {
   const runningTotal = (Number.parseFloat(finalPrice) * quantity).toFixed(2);
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-16 md:pt-24 pb-28 md:pb-12">
+    <div className="min-h-screen bg-gray-50 pt-16 md:pt-24 pb-10">
       <div className="max-w-5xl mx-auto md:px-6 md:py-6">
 
         {/* Desktop: kthehu mbrapa */}
@@ -250,8 +250,8 @@ export default function ProductPage() {
               </div>
             </div>
 
-            {/* Desktop: butoni i shportës */}
-            <div className="hidden md:block">
+            {/* Butoni i shportës — për të dyja mobile dhe desktop */}
+            <div className="mt-2 pb-6 md:pb-0">
               {added ? (
                 <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-5 py-4">
                   <FaCheckCircle className="text-green-500 text-xl shrink-0" />
@@ -274,38 +274,6 @@ export default function ProductPage() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* ── Mobile: CTA i ngjitur poshtë ── */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-3 z-50 shadow-[0_-4px_16px_rgba(0,0,0,0.07)]">
-        {added ? (
-          <div className="flex items-center justify-between gap-3 bg-green-50 border border-green-200 rounded-2xl px-4 py-3">
-            <div className="flex items-center gap-2">
-              <FaCheckCircle className="text-green-500 text-lg" />
-              <span className="font-semibold text-green-700 text-sm">U shtua!</span>
-            </div>
-            <Link
-              href="/cart"
-              className="bg-green-600 text-white text-sm font-bold px-5 py-2 rounded-xl active:scale-95 transition"
-            >
-              Shko te shporta →
-            </Link>
-          </div>
-        ) : (
-          <div className="flex items-center gap-3">
-            <div>
-              <p className="text-xs text-gray-400">Totali</p>
-              <p className="text-lg font-extrabold text-green-600">{runningTotal} €</p>
-            </div>
-            <button
-              onClick={handleAddToCart}
-              className="flex-1 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-2xl transition active:scale-95"
-            >
-              <FaShoppingCart />
-              Shto në shportë
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );
