@@ -6,7 +6,13 @@ import { usePathname, useRouter } from "next/navigation";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { supabase } from "../lib/supabase";
-import { checkRateLimit, recordFailedAttempt, clearRateLimit, formatBlockTime, getRateLimitKey } from "../lib/useRateLimit";
+import {
+  checkRateLimit,
+  recordFailedAttempt,
+  clearRateLimit,
+  formatBlockTime,
+  getRateLimitKey,
+} from "../lib/useRateLimit";
 import { FaUser, FaShoppingCart, FaBars, FaTimes } from "react-icons/fa";
 
 type LoginFormProps = {
@@ -33,19 +39,28 @@ function LoginForm({
   onClose,
 }: LoginFormProps) {
   return (
-    <div className={`bg-white text-gray-800 rounded-2xl shadow-2xl border border-gray-100 ${compact ? "p-5" : "p-6"}`}>
-      <h2 className={`font-extrabold uppercase mb-1 tracking-wide ${compact ? "text-lg" : "text-xl"}`}>
+    <div
+      className={`bg-white text-gray-800 rounded-2xl shadow-2xl border border-gray-100 ${compact ? "p-5" : "p-6"}`}
+    >
+      <h2
+        className={`font-extrabold uppercase mb-1 tracking-wide ${compact ? "text-lg" : "text-xl"}`}
+      >
         Hyrje
       </h2>
       <p className={`text-gray-500 mb-4 ${compact ? "text-xs" : "text-sm"}`}>
         Hyni me email dhe fjalëkalim.
       </p>
       {loginError && (
-        <p className="text-red-600 text-xs mb-3 bg-red-50 px-3 py-2 rounded-lg">{loginError}</p>
+        <p className="text-red-600 text-xs mb-3 bg-red-50 px-3 py-2 rounded-lg">
+          {loginError}
+        </p>
       )}
       <form onSubmit={onSubmit} className="space-y-3">
         <div>
-          <label htmlFor={compact ? "email-m" : "email-d"} className="block text-xs font-semibold text-gray-600 mb-1">
+          <label
+            htmlFor={compact ? "email-m" : "email-d"}
+            className="block text-xs font-semibold text-gray-600 mb-1"
+          >
             Email *
           </label>
           <input
@@ -58,7 +73,10 @@ function LoginForm({
           />
         </div>
         <div>
-          <label htmlFor={compact ? "pass-m" : "pass-d"} className="block text-xs font-semibold text-gray-600 mb-1">
+          <label
+            htmlFor={compact ? "pass-m" : "pass-d"}
+            className="block text-xs font-semibold text-gray-600 mb-1"
+          >
             Fjalëkalimi *
           </label>
           <input
@@ -101,8 +119,11 @@ function LoginForm({
 
 function Navbar() {
   const { state } = useCart();
-  const { isClientLoggedIn, logout, authLoading } = useAuth();
-  const totalItems = state.items.reduce((sum: number, item) => sum + item.quantity, 0);
+  const { isClientLoggedIn, logout, authLoading, setIsAdmin } = useAuth();
+  const totalItems = state.items.reduce(
+    (sum: number, item) => sum + item.quantity,
+    0,
+  );
 
   const [isOpen, setIsOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -149,7 +170,9 @@ function Navbar() {
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [isOpen]);
 
   const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -159,7 +182,9 @@ function Navbar() {
     const rlKey = getRateLimitKey("navbar_login");
     const { blocked, remainingMs } = checkRateLimit(rlKey);
     if (blocked) {
-      setLoginError(`Shumë përpjekje. Provo përsëri pas ${formatBlockTime(remainingMs)}.`);
+      setLoginError(
+        `Shumë përpjekje. Provo përsëri pas ${formatBlockTime(remainingMs)}.`,
+      );
       return;
     }
 
@@ -168,16 +193,24 @@ function Navbar() {
       return;
     }
     setLoginLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
     if (error) {
       const result = recordFailedAttempt(rlKey);
       if (result.blocked) {
-        setLoginError("Llogaria u bllokua për 15 minuta për shkak të shumë përpjekjeve.");
+        setLoginError(
+          "Llogaria u bllokua për 15 minuta për shkak të shumë përpjekjeve.",
+        );
       } else {
-        setLoginError(`Email ose fjalëkalimi i pasaktë. Përpjekje të mbetura: ${result.attemptsLeft}.`);
+        setLoginError(
+          `Email ose fjalëkalimi i pasaktë. Përpjekje të mbetura: ${result.attemptsLeft}.`,
+        );
       }
     } else {
       clearRateLimit(rlKey);
+      setIsAdmin(false);
     }
     setLoginLoading(false);
   };
@@ -197,7 +230,6 @@ function Navbar() {
     <>
       <nav className="sticky top-0 left-0 w-full bg-gray-800 text-white shadow-md z-50">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
-
           {/* Mobile: hamburger MAJTAS */}
           <button
             className="md:hidden p-2 rounded hover:bg-gray-700 text-xl"
@@ -217,11 +249,26 @@ function Navbar() {
 
           {/* Desktop nav */}
           <ul className="hidden md:flex space-x-6 font-medium items-center">
-            <li><Link href="/" className="hover:text-green-400">Home</Link></li>
-            <li><Link href="/about" className="hover:text-green-400">About</Link></li>
-            <li><Link href="/produktet" className="hover:text-green-400">Produktet</Link></li>
+            <li>
+              <Link href="/" className="hover:text-green-400">
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link href="/about" className="hover:text-green-400">
+                About
+              </Link>
+            </li>
+            <li>
+              <Link href="/produktet" className="hover:text-green-400">
+                Produktet
+              </Link>
+            </li>
             <li className="relative">
-              <Link href="/cart" className="hover:text-green-400 flex items-center gap-1">
+              <Link
+                href="/cart"
+                className="hover:text-green-400 flex items-center gap-1"
+              >
                 <FaShoppingCart />
                 Shporta
               </Link>
@@ -236,11 +283,17 @@ function Navbar() {
               <li className="relative" ref={desktopDropdownRef}>
                 {isClientLoggedIn ? (
                   <div className="flex items-center gap-3">
-                    <Link href="/client-profile" className="hover:text-green-400 flex items-center gap-1">
+                    <Link
+                      href="/client-profile"
+                      className="hover:text-green-400 flex items-center gap-1"
+                    >
                       <FaUser />
                       Llogaria
                     </Link>
-                    <button onClick={() => logout()} className="bg-red-500 px-3 py-1 rounded hover:bg-red-600 text-sm">
+                    <button
+                      onClick={() => logout()}
+                      className="bg-red-500 px-3 py-1 rounded hover:bg-red-600 text-sm"
+                    >
                       Logout
                     </button>
                   </div>
@@ -267,7 +320,11 @@ function Navbar() {
           {/* Mobile: user + cart (djathtas) */}
           <div className="flex md:hidden items-center gap-4">
             {!authLoading && isClientLoggedIn && (
-              <Link href="/client-profile" className="text-xl hover:text-green-400" aria-label="Llogaria ime">
+              <Link
+                href="/client-profile"
+                className="text-xl hover:text-green-400"
+                aria-label="Llogaria ime"
+              >
                 <FaUser />
               </Link>
             )}
@@ -289,7 +346,11 @@ function Navbar() {
               </div>
             )}
 
-            <Link href="/cart" className="relative text-xl" aria-label="Shporta">
+            <Link
+              href="/cart"
+              className="relative text-xl"
+              aria-label="Shporta"
+            >
               <FaShoppingCart />
               {totalItems > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full px-1.5 py-0.5">
@@ -320,7 +381,9 @@ function Navbar() {
         }`}
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-          <span className="text-lg font-extrabold text-green-600">🌱 Agro Fresh</span>
+          <span className="text-lg font-extrabold text-green-600">
+            🌱 Agro Fresh
+          </span>
           <button
             onClick={() => setIsOpen(false)}
             className="text-gray-400 hover:text-gray-700 text-xl p-1"
@@ -335,7 +398,10 @@ function Navbar() {
             { href: "/", label: "HOME" },
             { href: "/about", label: "RRETH NESH" },
             { href: "/produktet", label: "PRODUKTET" },
-            { href: "/cart", label: totalItems > 0 ? `SHPORTA (${totalItems})` : "SHPORTA" },
+            {
+              href: "/cart",
+              label: totalItems > 0 ? `SHPORTA (${totalItems})` : "SHPORTA",
+            },
           ].map((item) => (
             <Link
               key={item.href}
@@ -357,7 +423,10 @@ function Navbar() {
                 LLOGARIA IME
               </Link>
               <button
-                onClick={() => { logout(); setIsOpen(false); }}
+                onClick={() => {
+                  logout();
+                  setIsOpen(false);
+                }}
                 className="px-6 py-4 text-sm font-bold tracking-widest border-b border-gray-100 hover:bg-red-50 text-red-500 hover:text-red-600 transition text-left"
               >
                 LOGOUT

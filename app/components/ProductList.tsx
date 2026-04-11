@@ -15,6 +15,7 @@ type Product = {
   category: string;
   image: string;
   discount: number;
+  unit: string;
 };
 
 const CATEGORIES = [
@@ -193,10 +194,10 @@ function ProductList({ title, category: initialCategory }: { readonly title: str
                 {discountedPrice ? (
                   <div className="mt-1 mb-3">
                     <span className="text-gray-400 line-through text-sm mr-2">{item.price} €</span>
-                    <span className="text-lg font-bold text-red-600">{discountedPrice} €</span>
+                    <span className="text-lg font-bold text-red-600">{discountedPrice} € / {item.unit ?? "copë"}</span>
                   </div>
                 ) : (
-                  <p className="mt-1 mb-3 text-lg font-bold text-green-700">{item.price} €</p>
+                  <p className="mt-1 mb-3 text-lg font-bold text-green-700">{item.price} € / {item.unit ?? "copë"}</p>
                 )}
 
                 <div className="flex items-center justify-center gap-3 mb-3">

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
+import { supabase } from "../lib/supabase";
 
 export default function AdminLogin() {
   const [username, setUsername] = useState("");
@@ -10,7 +11,7 @@ export default function AdminLogin() {
   const router = useRouter();
   const { setIsAdmin } = useAuth();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!username || !password) {
@@ -19,6 +20,7 @@ export default function AdminLogin() {
     }
 
     if (username === "admin" && password === "1234") {
+      await supabase.auth.signOut();
       setIsAdmin(true);
       router.push("/admin");
     } else {

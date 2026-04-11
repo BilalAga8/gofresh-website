@@ -14,6 +14,7 @@ interface Product {
   category: string;
   image: string;
   discount: number;
+  unit: string;
 }
 
 interface OrderItem {
@@ -56,6 +57,7 @@ export default function AdminPanel() {
   const [category, setCategory] = useState("");
   const [image, setImage] = useState("");
   const [discount, setDiscount] = useState("0");
+  const [unit, setUnit] = useState("kg");
   const [products, setProducts] = useState<Product[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -98,20 +100,20 @@ export default function AdminPanel() {
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     if (!name || !price || !category) { alert("Ju lutem plotësoni të gjitha fushat!"); return; }
-    const productData = { name, price: Number.parseFloat(price), category, image, discount: Number.parseInt(discount) || 0 };
+    const productData = { name, price: Number.parseFloat(price), category, image, discount: Number.parseInt(discount) || 0, unit };
     if (editingId !== null) {
       await supabase.from("products").update(productData).eq("id", editingId);
       setEditingId(null);
     } else {
       await supabase.from("products").insert(productData);
     }
-    setName(""); setPrice(""); setCategory(""); setImage(""); setDiscount("0");
+    setName(""); setPrice(""); setCategory(""); setImage(""); setDiscount("0"); setUnit("kg");
     fetchProducts();
   };
 
-  const handleEdit = (p: Product) => { setName(p.name); setPrice(p.price.toString()); setCategory(p.category); setImage(p.image ?? ""); setDiscount(p.discount?.toString() ?? "0"); setEditingId(p.id); };
+  const handleEdit = (p: Product) => { setName(p.name); setPrice(p.price.toString()); setCategory(p.category); setImage(p.image ?? ""); setDiscount(p.discount?.toString() ?? "0"); setUnit(p.unit ?? "kg"); setEditingId(p.id); };
   const handleDelete = async (id: string) => { if (globalThis.confirm("Jeni të sigurt?")) { await supabase.from("products").delete().eq("id", id); fetchProducts(); } };
-  const handleCancel = () => { setName(""); setPrice(""); setCategory(""); setImage(""); setDiscount("0"); setEditingId(null); };
+  const handleCancel = () => { setName(""); setPrice(""); setCategory(""); setImage(""); setDiscount("0"); setUnit("kg"); setEditingId(null); };
 
   const uploadImage = async (file: File) => {
     if (!file.type.startsWith("image/")) { alert("Ju lutem zgjidhni një imazh!"); return; }
@@ -322,7 +324,18 @@ export default function AdminPanel() {
                     </div>
                   )}
                 </div>
-                <div className="flex items-center gap-3 sm:col-span-2">
+                <div className="flex items-center gap-3">
+                  <label className="text-sm font-medium text-gray-600 whitespace-nowrap">Njësia:</label>
+                  <select value={unit} onChange={(e) => setUnit(e.target.value)} className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400">
+                    <option value="kg">kg</option>
+                    <option value="g">g</option>
+                    <option value="copë">copë</option>
+                    <option value="litër">litër</option>
+                    <option value="pako">pako</option>
+                    <option value="tufë">tufë</option>
+                  </select>
+                </div>
+                <div className="flex items-center gap-3">
                   <label className="text-sm font-medium text-gray-600 whitespace-nowrap">Zbritje (%):</label>
                   <input type="number" min="0" max="100" value={discount} onChange={(e) => setDiscount(e.target.value)} className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
                 </div>
@@ -343,7 +356,7 @@ export default function AdminPanel() {
               {products.map((p) => (
                 <div key={p.id} className="bg-white rounded-xl border border-gray-100 px-4 py-3 flex justify-between items-center">
                   <span className="text-sm">
-                    <strong>{p.name}</strong> — {p.price} €
+                    <strong>{p.name}</strong> — {p.price} € / {p.unit ?? "copë"}
                     {p.discount > 0 && <span className="ml-2 text-red-500 text-xs font-semibold">-{p.discount}%</span>}
                     <span className="text-gray-400 text-xs ml-2">({p.category})</span>
                   </span>

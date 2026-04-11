@@ -22,6 +22,7 @@ type Product = {
   category: string;
   image: string;
   discount: number;
+  unit: string;
   description?: string;
 };
 
@@ -197,7 +198,7 @@ export default function ProductPage() {
 
               {/* Çmimi */}
               <div className="flex items-baseline gap-3 mb-5">
-                <span className="text-3xl font-extrabold text-green-600">{finalPrice} €</span>
+                <span className="text-3xl font-extrabold text-green-600">{finalPrice} € / {product.unit ?? "copë"}</span>
                 {discountedPrice && (
                   <>
                     <span className="text-base text-gray-400 line-through">{product.price.toFixed(2)} €</span>
