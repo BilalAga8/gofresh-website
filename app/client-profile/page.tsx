@@ -32,7 +32,7 @@ type FavoriteProduct = {
     image: string;
     unit: string;
     discount: number;
-  };
+  }[];
 };
 
 type Order = {
@@ -199,8 +199,8 @@ export default function ClientProfile() {
                 <p className="text-sm text-gray-400">Nuk keni produkte të preferuara ende.</p>
               ) : (
                 <div className="space-y-3">
-                  {favorites.map((fav) => {
-                    const p = fav.products;
+                  {favorites.filter((fav) => fav.products?.length > 0).map((fav) => {
+                    const p = fav.products[0];
                     const finalPrice = p.discount > 0
                       ? (p.price * (1 - p.discount / 100)).toFixed(2)
                       : p.price.toFixed(2);
