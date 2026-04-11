@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState, useMemo } from "react";
 import { FaHeart, FaRegHeart, FaSearch, FaTimes } from "react-icons/fa";
 import { useCart } from "../context/CartContext";
@@ -181,13 +182,14 @@ function ProductList({ title, category: initialCategory }: { readonly title: str
                   {isFav ? <FaHeart className="text-red-500" /> : <FaRegHeart className="text-gray-400 hover:text-red-400" />}
                 </button>
 
-                {item.image ? (
-                  <Image src={item.image} alt={item.name} width={400} height={160} className="rounded-lg mb-3 w-full h-40 object-cover" />
-                ) : (
-                  <div className="rounded-lg mb-3 w-full h-40 bg-gray-100 flex items-center justify-center text-gray-400 text-sm">Pa foto</div>
-                )}
-
-                <h3 className="text-base font-semibold text-green-700">{item.name}</h3>
+                <Link href={`/produktet/${item.id}`} className="block">
+                  {item.image ? (
+                    <Image src={item.image} alt={item.name} width={400} height={160} className="rounded-lg mb-3 w-full h-40 object-cover" />
+                  ) : (
+                    <div className="rounded-lg mb-3 w-full h-40 bg-gray-100 flex items-center justify-center text-gray-400 text-sm">Pa foto</div>
+                  )}
+                  <h3 className="text-base font-semibold text-green-700 hover:text-green-500 transition">{item.name}</h3>
+                </Link>
                 {discountedPrice ? (
                   <div className="mt-1 mb-3">
                     <span className="text-gray-400 line-through text-sm mr-2">{item.price} €</span>
