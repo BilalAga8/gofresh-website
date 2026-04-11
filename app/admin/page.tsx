@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { FaBox, FaClipboardList, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import Image from "next/image";
+import { FaBox, FaClipboardList, FaChevronDown, FaChevronUp, FaCloudUploadAlt, FaTimes } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import { supabase } from "../lib/supabase";
 
@@ -57,6 +58,9 @@ export default function AdminPanel() {
   const [discount, setDiscount] = useState("0");
   const [products, setProducts] = useState<Product[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Porosite
   const [orders, setOrders] = useState<Order[]>([]);
@@ -107,6 +111,30 @@ export default function AdminPanel() {
   const handleEdit = (p: Product) => { setName(p.name); setPrice(p.price.toString()); setCategory(p.category); setImage(p.image ?? ""); setDiscount(p.discount?.toString() ?? "0"); setEditingId(p.id); };
   const handleDelete = async (id: string) => { if (globalThis.confirm("Jeni të sigurt?")) { await supabase.from("products").delete().eq("id", id); fetchProducts(); } };
   const handleCancel = () => { setName(""); setPrice(""); setCategory(""); setImage(""); setDiscount("0"); setEditingId(null); };
+
+  const uploadImage = async (file: File) => {
+    if (!file.type.startsWith("image/")) { alert("Ju lutem zgjidhni një imazh!"); return; }
+    setUploading(true);
+    const ext = file.name.split(".").pop();
+    const filename = `${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("product-images").upload(filename, file, { upsert: true });
+    if (error) { alert("Gabim gjatë ngarkimit: " + error.message); setUploading(false); return; }
+    const { data } = supabase.storage.from("product-images").getPublicUrl(filename);
+    setImage(data.publicUrl);
+    setUploading(false);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) uploadImage(file);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) uploadImage(file);
+  };
   const handleLogout = () => { setIsAdmin(false); router.replace("/"); };
 
   if (!isAdmin) return null;
@@ -259,7 +287,40 @@ export default function AdminPanel() {
                   <option value="shporta">Shporta (Ofertat)</option>
                   <option value="fruta-thata">Produkte të Ambalazhuara</option>
                 </select>
-                <input type="text" placeholder="Imazhi (p.sh. /foto/domate.jpg)" value={image} onChange={(e) => setImage(e.target.value)} className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
+                {/* Upload foto */}
+                <div className="sm:col-span-2">
+                  <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+                  {image ? (
+                    <div className="relative w-full h-40 rounded-xl overflow-hidden border border-gray-200">
+                      <Image src={image} alt="preview" fill className="object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setImage("")}
+                        className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition"
+                      >
+                        <FaTimes className="text-xs" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div
+                      onClick={() => fileInputRef.current?.click()}
+                      onDrop={handleDrop}
+                      onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                      onDragLeave={() => setDragOver(false)}
+                      className={`w-full h-32 border-2 border-dashed rounded-xl flex flex-col items-center justify-center cursor-pointer transition ${dragOver ? "border-green-500 bg-green-50" : "border-gray-300 hover:border-green-400 hover:bg-gray-50"}`}
+                    >
+                      {uploading ? (
+                        <div className="w-6 h-6 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <>
+                          <FaCloudUploadAlt className="text-3xl text-gray-400 mb-1" />
+                          <p className="text-sm text-gray-500">Kliko ose tërhiq foton këtu</p>
+                          <p className="text-xs text-gray-400 mt-0.5">JPG, PNG, WEBP</p>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
                 <div className="flex items-center gap-3 sm:col-span-2">
                   <label className="text-sm font-medium text-gray-600 whitespace-nowrap">Zbritje (%):</label>
                   <input type="number" min="0" max="100" value={discount} onChange={(e) => setDiscount(e.target.value)} className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
