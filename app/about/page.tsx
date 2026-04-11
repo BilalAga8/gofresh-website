@@ -1,5 +1,17 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { FaLeaf, FaTruck, FaSeedling, FaHeart, FaPhone, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
+
+export const metadata: Metadata = {
+  title: "Rreth Nesh",
+  description: "Agro Fresh është një fermë familjare në Tiranë që nga viti 2010. Sjellim produkte bio, natyrale dhe të freskëta direkt tek ju.",
+  openGraph: {
+    title: "Rreth Nesh | Agro Fresh",
+    description: "Mëso historinë tonë — fermë familjare që sjell produkte natyrale direkt nga toka tek tryeza juaj.",
+    images: [{ url: "/foto/sera2.jpg", alt: "Ferma Agro Fresh" }],
+  },
+  alternates: { canonical: "https://gofresh-website.vercel.app/about" },
+};
 
 const vlerat = [
   { icon: <FaLeaf className="text-green-500 text-2xl" />, title: "100% Natyrale", desc: "Asnjë pesticide, asnjë kimikate — vetëm produkte të pastra nga natyra." },
