@@ -14,6 +14,7 @@ import { supabase } from "../lib/supabase";
 type AuthContextType = {
   isAdmin: boolean;
   setIsAdmin: (value: boolean) => void;
+  adminLoading: boolean;
   isClientLoggedIn: boolean;
   user: User | null;
   logout: () => Promise<void>;
@@ -23,6 +24,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType>({
   isAdmin: false,
   setIsAdmin: () => null,
+  adminLoading: true,
   isClientLoggedIn: false,
   user: null,
   logout: async () => {},
@@ -31,11 +33,13 @@ const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAdmin, setIsAdminState] = useState<boolean>(false);
+  const [adminLoading, setAdminLoading] = useState<boolean>(true);
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState<boolean>(true);
 
   useEffect(() => {
     setIsAdminState(localStorage.getItem("isAdmin") === "true");
+    setAdminLoading(false);
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
@@ -63,13 +67,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     () => ({
       isAdmin,
       setIsAdmin,
+      adminLoading,
       isClientLoggedIn: !!user,
       user,
       logout,
       authLoading,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isAdmin, user, authLoading]
+    [isAdmin, adminLoading, user, authLoading]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

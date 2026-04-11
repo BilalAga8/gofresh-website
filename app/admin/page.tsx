@@ -47,7 +47,7 @@ type Tab = "produktet" | "porosite";
 
 export default function AdminPanel() {
   const router = useRouter();
-  const { isAdmin, setIsAdmin } = useAuth();
+  const { isAdmin, setIsAdmin, adminLoading } = useAuth();
   const [tab, setTab] = useState<Tab>("porosite");
 
   // Produktet
@@ -68,13 +68,14 @@ export default function AdminPanel() {
   const [filterStatus, setFilterStatus] = useState("all");
 
   useEffect(() => {
+    if (adminLoading) return;
     if (isAdmin) {
       fetchProducts();
       fetchOrders();
     } else {
       router.replace("/login-admin");
     }
-  }, [isAdmin, router]);
+  }, [isAdmin, adminLoading, router]);
 
   async function fetchProducts() {
     const { data } = await supabase.from("products").select("*").order("created_at", { ascending: false });

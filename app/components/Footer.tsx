@@ -62,6 +62,7 @@ function Footer() {
         <div className="flex gap-4">
           <Link href="/kushtet" className="hover:text-green-400 transition">Terms of Use</Link>
           <Link href="/privatesia" className="hover:text-green-400 transition">Privacy Policy</Link>
+          <Link href="/login-admin" className="hover:text-green-400 transition opacity-40 hover:opacity-100">Admin</Link>
         </div>
       </div>
     </footer>
