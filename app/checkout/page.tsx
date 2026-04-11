@@ -10,8 +10,13 @@ import { supabase } from "../lib/supabase";
 
 export default function Checkout() {
   const { state, dispatch } = useCart();
-  const { user, authLoading } = useAuth();
+  const { user, authLoading, isClientLoggedIn } = useAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (!isClientLoggedIn) router.replace("/login-client?redirect=/checkout");
+  }, [authLoading, isClientLoggedIn, router]);
 
   const [emri, setEmri] = useState("");
   const [mbiemri, setMbiemri] = useState("");

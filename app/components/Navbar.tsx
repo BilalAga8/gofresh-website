@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { supabase } from "../lib/supabase";
+import { checkRateLimit, recordFailedAttempt, clearRateLimit, formatBlockTime, getRateLimitKey } from "../lib/useRateLimit";
 import { FaUser, FaShoppingCart, FaBars, FaTimes } from "react-icons/fa";
 
 type LoginFormProps = {
@@ -134,13 +135,16 @@ function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Mbyll dropdown kur logon me sukses (pa setState direkt në effect)
+  const wasLoggedIn = useRef(isClientLoggedIn);
   useEffect(() => {
-    if (isClientLoggedIn) {
+    if (!wasLoggedIn.current && isClientLoggedIn) {
       setIsLoginOpen(false);
       setEmail("");
       setPassword("");
       setLoginError("");
     }
+    wasLoggedIn.current = isClientLoggedIn;
   }, [isClientLoggedIn]);
 
   useEffect(() => {
@@ -151,13 +155,30 @@ function Navbar() {
   const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoginError("");
+
+    const rlKey = getRateLimitKey("navbar_login");
+    const { blocked, remainingMs } = checkRateLimit(rlKey);
+    if (blocked) {
+      setLoginError(`Shumë përpjekje. Provo përsëri pas ${formatBlockTime(remainingMs)}.`);
+      return;
+    }
+
     if (!email || !password) {
       setLoginError("Ju lutem plotësoni të gjitha fushat!");
       return;
     }
     setLoginLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) setLoginError("Email ose fjalëkalimi është i pasaktë!");
+    if (error) {
+      const result = recordFailedAttempt(rlKey);
+      if (result.blocked) {
+        setLoginError("Llogaria u bllokua për 15 minuta për shkak të shumë përpjekjeve.");
+      } else {
+        setLoginError(`Email ose fjalëkalimi i pasaktë. Përpjekje të mbetura: ${result.attemptsLeft}.`);
+      }
+    } else {
+      clearRateLimit(rlKey);
+    }
     setLoginLoading(false);
   };
 
