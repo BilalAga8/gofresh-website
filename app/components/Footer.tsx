@@ -60,8 +60,8 @@ function Footer() {
         <span>© 2026 Agro Fresh. Të gjitha të drejtat e rezervuara.</span>
         <span className="hidden sm:block text-gray-600">|</span>
         <div className="flex gap-4">
-          <Link href="/kushtet" className="hover:text-green-400 transition">Kushtet e Përdorimit</Link>
-          <Link href="/privatesia" className="hover:text-green-400 transition">Politika e Privatësisë</Link>
+          <Link href="/kushtet" className="hover:text-green-400 transition">Terms of Use</Link>
+          <Link href="/privatesia" className="hover:text-green-400 transition">Privacy Policy</Link>
         </div>
       </div>
     </footer>
