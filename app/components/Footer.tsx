@@ -56,8 +56,13 @@ function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-gray-700 py-4 text-center text-xs text-gray-500">
-        © 2026 Agro Fresh. Të gjitha të drejtat e rezervuara.
+      <div className="border-t border-gray-700 py-4 text-center text-xs text-gray-500 flex flex-col sm:flex-row items-center justify-center gap-3">
+        <span>© 2026 Agro Fresh. Të gjitha të drejtat e rezervuara.</span>
+        <span className="hidden sm:block text-gray-600">|</span>
+        <div className="flex gap-4">
+          <Link href="/kushtet" className="hover:text-green-400 transition">Kushtet e Përdorimit</Link>
+          <Link href="/privatesia" className="hover:text-green-400 transition">Politika e Privatësisë</Link>
+        </div>
       </div>
     </footer>
   );
