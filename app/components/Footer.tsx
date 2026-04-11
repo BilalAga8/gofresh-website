@@ -8,7 +8,7 @@ function Footer() {
 
         {/* Brandi */}
         <div>
-          <h2 className="text-2xl font-bold text-green-400 mb-3">🌱 Go Fresh</h2>
+          <h2 className="text-2xl font-bold text-green-400 mb-3">🌱 Agro Fresh</h2>
           <p className="text-sm text-gray-400 leading-relaxed">
             Produkte të freskëta direkt nga ferma te dera juaj. Cilësi e garantuar, çmime të arsyeshme.
           </p>
@@ -57,7 +57,7 @@ function Footer() {
 
       {/* Bottom bar */}
       <div className="border-t border-gray-700 py-4 text-center text-xs text-gray-500">
-        © 2026 Go Fresh. Të gjitha të drejtat e rezervuara.
+        © 2026 Agro Fresh. Të gjitha të drejtat e rezervuara.
       </div>
     </footer>
   );

@@ -24,7 +24,7 @@ export default function About() {
           🌿 Rreth Nesh
         </span>
         <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
-          Ferma Familjare <span className="text-yellow-300">Go Fresh</span>
+          Ferma Familjare <span className="text-yellow-300">Agro Fresh</span>
         </h1>
         <p className="text-green-100 max-w-2xl mx-auto text-lg">
           Që nga viti 2010, sjellim produkte të freskëta, bio dhe të kultivuara me dashuri direkt nga ferma jonë tek tryeza juaj.
@@ -36,7 +36,7 @@ export default function About() {
         <div>
           <h2 className="text-3xl font-bold text-gray-800 mb-4">Historia jonë</h2>
           <p className="text-gray-600 leading-relaxed mb-4">
-            Go Fresh filloi si një fermë e vogël familjare në periferi të Tiranës. Me punë të palodhur dhe dashuri për natyrën, sot kemi zgjeruar veprimtarinë tonë duke shërbyer qindra familje çdo ditë.
+            Agro Fresh filloi si një fermë e vogël familjare në periferi të Tiranës. Me punë të palodhur dhe dashuri për natyrën, sot kemi zgjeruar veprimtarinë tonë duke shërbyer qindra familje çdo ditë.
           </p>
           <p className="text-gray-600 leading-relaxed">
             Misioni ynë është i thjeshtë: të sjellim ushqim të shëndetshëm, të freskët dhe të sigurt tek çdo familje shqiptare, me çmime të arsyeshme.

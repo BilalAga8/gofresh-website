@@ -7,7 +7,7 @@ import Footer from "./components/Footer";
 import ToastMessage from "./components/ToastMessage";
 
 export const metadata: Metadata = {
-  title: "Go Fresh - Farm Website",
+  title: "Agro Fresh - Farm Website",
   description: "Produkte të freskëta dhe natyrale, direkt nga ferma tek ju.",
 };
 

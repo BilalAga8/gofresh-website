@@ -28,7 +28,8 @@ type CartAction =
   | { type: "CLEAR_CART" }
   | { type: "INCREASE_QUANTITY"; payload: string }
   | { type: "DECREASE_QUANTITY"; payload: string }
-  | { type: "SET_TOAST_MESSAGE"; payload: string | null };
+  | { type: "SET_TOAST_MESSAGE"; payload: string | null }
+  | { type: "LOAD_CART"; payload: CartItem[] };
 
 const initialState: CartState = {
   items: [],
@@ -85,6 +86,8 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       };
     case "SET_TOAST_MESSAGE":
       return { ...state, toastMessage: action.payload };
+    case "LOAD_CART":
+      return { ...state, items: action.payload };
     default:
       return state;
   }
@@ -100,6 +103,23 @@ const CartContext = createContext<{
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
+
+  // Ngarko nga localStorage vetëm pas montimit (client-side)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("cart");
+      if (saved) {
+        dispatch({ type: "LOAD_CART", payload: JSON.parse(saved) });
+      }
+    } catch {
+      // localStorage i dëmtuar — vazhdojmë me shportë bosh
+    }
+  }, []);
+
+  // Ruaj në localStorage sa herë ndryshon shporta
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(state.items));
+  }, [state.items]);
 
   useEffect(() => {
     if (state.toastMessage) {
