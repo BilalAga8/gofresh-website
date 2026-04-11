@@ -83,6 +83,23 @@ export default function Checkout() {
       }))
     );
 
+    // Dërgo email konfirmimi
+    if (user?.email) {
+      await fetch("/api/send-order-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          toEmail: user.email,
+          emri,
+          mbiemri,
+          orderId: order.id,
+          items: state.items,
+          total,
+          adresa,
+        }),
+      });
+    }
+
     dispatch({ type: "CLEAR_CART" });
     setLoading(false);
     setSuccess(true);
