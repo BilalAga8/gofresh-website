@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
@@ -69,6 +70,7 @@ export default function RootLayout({
             <ToastMessage />
           </CartProvider>
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   );
