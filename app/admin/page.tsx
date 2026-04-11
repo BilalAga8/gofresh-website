@@ -102,10 +102,12 @@ export default function AdminPanel() {
     if (!name || !price || !category) { alert("Ju lutem plotësoni të gjitha fushat!"); return; }
     const productData = { name, price: Number.parseFloat(price), category, image, discount: Number.parseInt(discount) || 0, unit };
     if (editingId !== null) {
-      await supabase.from("products").update(productData).eq("id", editingId);
+      const { error } = await supabase.from("products").update(productData).eq("id", editingId);
+      if (error) { alert("Gabim gjatë editimit: " + error.message); return; }
       setEditingId(null);
     } else {
-      await supabase.from("products").insert(productData);
+      const { error } = await supabase.from("products").insert(productData);
+      if (error) { alert("Gabim gjatë shtimit: " + error.message); return; }
     }
     setName(""); setPrice(""); setCategory(""); setImage(""); setDiscount("0"); setUnit("kg");
     fetchProducts();

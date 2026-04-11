@@ -10,6 +10,6 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     detectSessionInUrl: false,
-    persistSession: typeof window !== "undefined",
+    persistSession: typeof globalThis.window !== "undefined",
   },
 });

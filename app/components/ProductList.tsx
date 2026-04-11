@@ -99,7 +99,13 @@ function ProductList({ title, category: initialCategory, onlyDiscounted = false 
   };
 
   const changeQuantity = (id: string, delta: number) => {
-    setQuantities((prev) => ({ ...prev, [id]: Math.max(1, (prev[id] ?? 1) + delta) }));
+    setQuantities((prev) => ({ ...prev, [id]: Math.max(0.5, Math.round(((prev[id] ?? 1) + delta) * 10) / 10) }));
+  };
+
+  const setQuantity = (id: string, value: string) => {
+    const n = Number.parseFloat(value);
+    if (!Number.isNaN(n) && n >= 0.1) setQuantities((prev) => ({ ...prev, [id]: n }));
+    else if (value === "") setQuantities((prev) => ({ ...prev, [id]: 0.5 }));
   };
 
   if (loading) {
@@ -203,7 +209,14 @@ function ProductList({ title, category: initialCategory, onlyDiscounted = false 
 
                 <div className="flex items-center justify-center gap-3 mb-3">
                   <button onClick={() => changeQuantity(item.id, -1)} className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-lg font-bold transition">−</button>
-                  <span className="text-lg font-semibold w-6 text-center">{qty}</span>
+                  <input
+                    type="number"
+                    min="0.5"
+                    step="0.5"
+                    value={qty}
+                    onChange={(e) => setQuantity(item.id, e.target.value)}
+                    className="w-14 text-center text-lg font-semibold border border-gray-200 rounded-lg py-0.5 focus:outline-none focus:ring-2 focus:ring-green-400"
+                  />
                   <button onClick={() => changeQuantity(item.id, 1)} className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-lg font-bold transition">+</button>
                 </div>
 
