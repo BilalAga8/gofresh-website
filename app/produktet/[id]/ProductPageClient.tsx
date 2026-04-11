@@ -192,10 +192,10 @@ export default function ProductPageClient() {
               </h1>
 
               <div className="flex items-baseline gap-3 mb-5">
-                <span className="text-3xl font-extrabold text-green-600">{finalPrice} € / {product.unit ?? "copë"}</span>
+                <span className="text-3xl font-extrabold text-green-600">{finalPrice} Lek / {product.unit ?? "copë"}</span>
                 {discountedPrice && (
                   <>
-                    <span className="text-base text-gray-400 line-through">{product.price.toFixed(2)} €</span>
+                    <span className="text-base text-gray-400 line-through">{product.price.toFixed(2)} Lek</span>
                     <span className="text-xs font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full">
                       -{product.discount}%
                     </span>
@@ -268,7 +268,7 @@ export default function ProductPageClient() {
                   className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl transition active:scale-95 text-base"
                 >
                   <FaShoppingCart />
-                  Shto në shportë — {runningTotal} €
+                  Shto në shportë — {runningTotal} Lek
                 </button>
               )}
             </div>

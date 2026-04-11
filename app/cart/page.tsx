@@ -64,7 +64,7 @@ export default function Cart() {
 
                 <div className="flex-1 min-w-0">
                   <h4 className="font-semibold text-gray-800 truncate">{item.name}</h4>
-                  <p className="text-green-600 font-bold text-sm mt-1">{item.price} € / copë</p>
+                  <p className="text-green-600 font-bold text-sm mt-1">{item.price} Lek / copë</p>
                 </div>
 
                 {/* +/- Sasia */}
@@ -86,7 +86,7 @@ export default function Cart() {
 
                 {/* Subtotali */}
                 <div className="text-right min-w-16">
-                  <p className="font-bold text-gray-800">{(item.price * item.quantity).toFixed(2)} €</p>
+                  <p className="font-bold text-gray-800">{(item.price * item.quantity).toFixed(2)} Lek</p>
                 </div>
 
                 {/* Fshi */}
@@ -117,7 +117,7 @@ export default function Cart() {
                 {state.items.map((item) => (
                   <div key={item.id} className="flex justify-between">
                     <span className="truncate max-w-36">{item.name} x{item.quantity}</span>
-                    <span className="font-medium text-gray-800">{(item.price * item.quantity).toFixed(2)} €</span>
+                    <span className="font-medium text-gray-800">{(item.price * item.quantity).toFixed(2)} Lek</span>
                   </div>
                 ))}
               </div>
@@ -125,7 +125,7 @@ export default function Cart() {
               <div className="border-t pt-4 mb-6">
                 <div className="flex justify-between text-lg font-bold text-gray-800">
                   <span>Totali</span>
-                  <span className="text-green-600">{total.toFixed(2)} €</span>
+                  <span className="text-green-600">{total.toFixed(2)} Lek</span>
                 </div>
               </div>
 

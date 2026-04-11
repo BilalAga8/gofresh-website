@@ -221,14 +221,14 @@ export default function Checkout() {
                 {state.items.map((item) => (
                   <div key={item.id} className="flex justify-between">
                     <span className="truncate max-w-36">{item.name} x{item.quantity}</span>
-                    <span className="font-medium text-gray-800">{(item.price * item.quantity).toFixed(2)} €</span>
+                    <span className="font-medium text-gray-800">{(item.price * item.quantity).toFixed(2)} Lek</span>
                   </div>
                 ))}
               </div>
               <div className="border-t pt-4">
                 <div className="flex justify-between text-lg font-bold text-gray-800">
                   <span>Totali</span>
-                  <span className="text-green-600">{total.toFixed(2)} €</span>
+                  <span className="text-green-600">{total.toFixed(2)} Lek</span>
                 </div>
               </div>
             </div>

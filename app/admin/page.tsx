@@ -228,7 +228,7 @@ export default function AdminPanel() {
                           <span className="text-sm text-gray-600">{order.emri} {order.mbiemri}</span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <span className="font-bold text-green-600">{Number(order.total).toFixed(2)} €</span>
+                          <span className="font-bold text-green-600">{Number(order.total).toFixed(2)} Lek</span>
                           {isOpen ? <FaChevronUp className="text-gray-400" /> : <FaChevronDown className="text-gray-400" />}
                         </div>
                       </button>
@@ -248,12 +248,12 @@ export default function AdminPanel() {
                               {order.order_items.map((item) => (
                                 <div key={item.id} className="flex justify-between text-sm text-gray-700">
                                   <span>{item.name} x{item.quantity}</span>
-                                  <span>{(item.price * item.quantity).toFixed(2)} €</span>
+                                  <span>{(item.price * item.quantity).toFixed(2)} Lek</span>
                                 </div>
                               ))}
                               <div className="border-t mt-2 pt-2 flex justify-between font-bold text-sm">
                                 <span>Totali</span>
-                                <span className="text-green-600">{Number(order.total).toFixed(2)} €</span>
+                                <span className="text-green-600">{Number(order.total).toFixed(2)} Lek</span>
                               </div>
                             </div>
                           </div>
@@ -290,7 +290,7 @@ export default function AdminPanel() {
               <h2 className="font-semibold text-gray-800 mb-2">{editingId ? "Edito Produktin" : "Shto Produkt të Ri"}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <input type="text" placeholder="Emri i produktit" value={name} onChange={(e) => setName(e.target.value)} className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
-                <input type="number" placeholder="Çmimi (€)" value={price} onChange={(e) => setPrice(e.target.value)} className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
+                <input type="number" placeholder="Çmimi (L)" value={price} onChange={(e) => setPrice(e.target.value)} className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
                 <select value={category} onChange={(e) => setCategory(e.target.value)} className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400">
                   <option value="">Zgjidh Kategorinë</option>
                   <option value="fruta">Frutat</option>
@@ -364,7 +364,7 @@ export default function AdminPanel() {
               {products.map((p) => (
                 <div key={p.id} className="bg-white rounded-xl border border-gray-100 px-4 py-3 flex justify-between items-center">
                   <span className="text-sm">
-                    <strong>{p.name}</strong> — {p.price} € / {p.unit ?? "copë"}
+                    <strong>{p.name}</strong> — {p.price} Lek / {p.unit ?? "copë"}
                     {p.discount > 0 && <span className="ml-2 text-red-500 text-xs font-semibold">-{p.discount}%</span>}
                     <span className="text-gray-400 text-xs ml-2">({p.category})</span>
                   </span>
@@ -419,9 +419,9 @@ export default function AdminPanel() {
               {/* Kartat e përmbledhjes */}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {[
-                  { label: "Të ardhura totale", value: `${totalRevenue.toFixed(2)} €`, color: "text-green-600" },
-                  { label: "Këtë muaj", value: `${monthRevenue.toFixed(2)} €`, color: "text-blue-600" },
-                  { label: "Sot", value: `${todayRevenue.toFixed(2)} €`, color: "text-purple-600" },
+                  { label: "Të ardhura totale", value: `${totalRevenue.toFixed(2)} Lek`, color: "text-green-600" },
+                  { label: "Këtë muaj", value: `${monthRevenue.toFixed(2)} Lek`, color: "text-blue-600" },
+                  { label: "Sot", value: `${todayRevenue.toFixed(2)} Lek`, color: "text-purple-600" },
                   { label: "Total porosi", value: orders.length, color: "text-gray-700" },
                   { label: "Total produkte", value: products.length, color: "text-gray-700" },
                   { label: "Porosi sot", value: orders.filter((o) => new Date(o.created_at).toDateString() === today).length, color: "text-gray-700" },
@@ -468,7 +468,7 @@ export default function AdminPanel() {
                       <div key={p.name}>
                         <div className="flex justify-between text-xs text-gray-500 mb-1">
                           <span><span className="font-bold text-gray-700 mr-1">#{i + 1}</span>{p.name}</span>
-                          <span className="font-semibold text-green-600">{p.revenue.toFixed(2)} €</span>
+                          <span className="font-semibold text-green-600">{p.revenue.toFixed(2)} Lek</span>
                         </div>
                         <div className="w-full bg-gray-100 rounded-full h-2.5">
                           <div

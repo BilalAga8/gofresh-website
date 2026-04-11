@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FaUser, FaBoxOpen, FaHistory, FaEdit, FaSignOutAlt, FaSave, FaTimes, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import Image from "next/image";
+import Link from "next/link";
+import { FaUser, FaBoxOpen, FaHistory, FaEdit, FaSignOutAlt, FaSave, FaTimes, FaChevronDown, FaChevronUp, FaHeart } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import { supabase } from "../lib/supabase";
 import { useRouter } from "next/navigation";
@@ -19,6 +21,18 @@ type OrderItem = {
   name: string;
   price: number;
   quantity: number;
+};
+
+type FavoriteProduct = {
+  product_id: string;
+  products: {
+    id: string;
+    name: string;
+    price: number;
+    image: string;
+    unit: string;
+    discount: number;
+  };
 };
 
 type Order = {
@@ -45,6 +59,7 @@ export default function ClientProfile() {
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [favorites, setFavorites] = useState<FavoriteProduct[]>([]);
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
 
   useEffect(() => {
@@ -66,6 +81,13 @@ export default function ClientProfile() {
         .order("created_at", { ascending: false });
 
       if (ordersData) setOrders(ordersData);
+
+      const { data: favsData } = await supabase
+        .from("favorites")
+        .select("product_id, products(id, name, price, image, unit, discount)")
+        .eq("user_id", user.id);
+
+      if (favsData) setFavorites(favsData as FavoriteProduct[]);
       setLoading(false);
     }
 
@@ -170,10 +192,36 @@ export default function ClientProfile() {
           <div className="flex flex-col gap-4">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
               <div className="flex items-center gap-2 mb-3">
-                <FaBoxOpen className="text-green-600" />
+                <FaHeart className="text-red-500" />
                 <h2 className="text-lg font-semibold text-gray-800">Të preferuarat</h2>
               </div>
-              <p className="text-sm text-gray-400">Nuk keni produkte të preferuara ende.</p>
+              {favorites.length === 0 ? (
+                <p className="text-sm text-gray-400">Nuk keni produkte të preferuara ende.</p>
+              ) : (
+                <div className="space-y-3">
+                  {favorites.map((fav) => {
+                    const p = fav.products;
+                    const finalPrice = p.discount > 0
+                      ? (p.price * (1 - p.discount / 100)).toFixed(2)
+                      : p.price.toFixed(2);
+                    return (
+                      <Link key={fav.product_id} href={`/produktet/${p.id}`} className="flex items-center gap-3 hover:bg-gray-50 rounded-xl p-2 transition">
+                        <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-gray-100 shrink-0">
+                          {p.image ? (
+                            <Image src={p.image} alt={p.name} fill className="object-cover" />
+                          ) : (
+                            <span className="flex items-center justify-center h-full text-xl">🥬</span>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-gray-800 truncate">{p.name}</p>
+                          <p className="text-xs text-green-600 font-bold">{finalPrice} Lek / {p.unit ?? "copë"}</p>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
             </div>
             <div className="bg-gradient-to-br from-green-500 to-green-400 rounded-2xl p-6 text-white">
               <p className="text-sm font-semibold opacity-80 mb-1">Porosi totale</p>
@@ -217,7 +265,7 @@ export default function ClientProfile() {
                           <span className={`text-xs font-semibold px-2 py-1 rounded-full ${s.color}`}>{s.label}</span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <span className="font-bold text-green-600">{Number(order.total).toFixed(2)} €</span>
+                          <span className="font-bold text-green-600">{Number(order.total).toFixed(2)} Lek</span>
                           {isOpen ? <FaChevronUp className="text-gray-400" /> : <FaChevronDown className="text-gray-400" />}
                         </div>
                       </button>
@@ -229,13 +277,13 @@ export default function ClientProfile() {
                             {order.order_items.map((item) => (
                               <div key={item.id} className="flex justify-between text-sm">
                                 <span className="text-gray-700">{item.name} <span className="text-gray-400">x{item.quantity}</span></span>
-                                <span className="font-medium text-gray-800">{(item.price * item.quantity).toFixed(2)} €</span>
+                                <span className="font-medium text-gray-800">{(item.price * item.quantity).toFixed(2)} Lek</span>
                               </div>
                             ))}
                           </div>
                           <div className="border-t mt-3 pt-2 flex justify-between font-bold text-sm">
                             <span>Totali</span>
-                            <span className="text-green-600">{Number(order.total).toFixed(2)} €</span>
+                            <span className="text-green-600">{Number(order.total).toFixed(2)} Lek</span>
                           </div>
                         </div>
                       )}
