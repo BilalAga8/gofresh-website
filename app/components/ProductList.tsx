@@ -33,7 +33,7 @@ const SORT_OPTIONS = [
   { id: "discount", label: "Me zbritje" },
 ];
 
-function ProductList({ title, category: initialCategory }: { readonly title: string; readonly category?: string }) {
+function ProductList({ title, category: initialCategory, onlyDiscounted = false }: { readonly title: string; readonly category?: string; readonly onlyDiscounted?: boolean }) {
   const { dispatch } = useCart();
   const { user } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
@@ -72,6 +72,7 @@ function ProductList({ title, category: initialCategory }: { readonly title: str
   const filtered = useMemo(() => {
     let list = [...products];
 
+    if (onlyDiscounted) list = list.filter((p) => p.discount > 0);
     if (activeCategory) list = list.filter((p) => p.category === activeCategory);
 
     if (search.trim()) {
@@ -84,7 +85,7 @@ function ProductList({ title, category: initialCategory }: { readonly title: str
     else if (sort === "discount") list.sort((a, b) => b.discount - a.discount);
 
     return list;
-  }, [products, activeCategory, search, sort]);
+  }, [products, activeCategory, search, sort, onlyDiscounted]);
 
   const toggleFavorite = async (productId: string) => {
     if (!user) { alert("Duhet të hyni për të ruajtur të preferuarat!"); return; }

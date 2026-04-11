@@ -127,7 +127,7 @@ function Hero() {
           Shiko Produktet
         </Link>
         <Link
-          href="/produktet?category=shporta"
+          href="/produktet?offer=true"
           className="px-8 py-3 bg-white/10 border border-white/30 text-white font-semibold rounded-xl hover:bg-white/20 transition"
         >
           Shiko Ofertat
