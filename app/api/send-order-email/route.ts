@@ -1,8 +1,6 @@
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 type OrderItem = {
   name: string;
   quantity: number;
@@ -86,6 +84,7 @@ export async function POST(req: Request) {
       </div>
     `;
 
+    const resend = new Resend(process.env.RESEND_API_KEY);
     const { error } = await resend.emails.send({
       from: "Agro Fresh <onboarding@resend.dev>",
       to: toEmail,
