@@ -87,7 +87,7 @@ export default function ClientProfile() {
         .select("product_id, products(id, name, price, image, unit, discount)")
         .eq("user_id", user.id);
 
-      if (favsData) setFavorites(favsData as FavoriteProduct[]);
+      if (favsData) setFavorites(favsData as unknown as FavoriteProduct[]);
       setLoading(false);
     }
 
