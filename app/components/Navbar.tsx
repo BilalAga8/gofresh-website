@@ -201,7 +201,7 @@ function Navbar() {
       const result = recordFailedAttempt(rlKey);
       if (result.blocked) {
         setLoginError(
-          "Llogaria u bllokua për 15 minuta për shkak të shumë përpjekjeve.",
+          "Profili u bllokua për 15 minuta për shkak të shumë përpjekjeve.",
         );
       } else {
         setLoginError(
@@ -288,7 +288,7 @@ function Navbar() {
                       className="hover:text-green-400 flex items-center gap-1"
                     >
                       <FaUser />
-                      Llogaria
+                      Profili
                     </Link>
                     <button
                       onClick={() => logout()}
@@ -323,7 +323,7 @@ function Navbar() {
               <Link
                 href="/client-profile"
                 className="text-xl hover:text-green-400"
-                aria-label="Llogaria ime"
+                aria-label="Profili ime"
               >
                 <FaUser />
               </Link>

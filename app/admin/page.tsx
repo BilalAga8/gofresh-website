@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { FaBox, FaClipboardList, FaChevronDown, FaChevronUp, FaCloudUploadAlt, FaTimes } from "react-icons/fa";
+import { FaBox, FaClipboardList, FaChevronDown, FaChevronUp, FaCloudUploadAlt, FaTimes, FaChartBar } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import { supabase } from "../lib/supabase";
 
@@ -44,7 +44,7 @@ const statusOptions = [
   { value: "cancelled", label: "Anuluar",           color: "bg-red-100 text-red-700" },
 ];
 
-type Tab = "produktet" | "porosite";
+type Tab = "produktet" | "porosite" | "statistikat";
 
 export default function AdminPanel() {
   const router = useRouter();
@@ -176,6 +176,12 @@ export default function AdminPanel() {
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition ${tab === "produktet" ? "bg-green-600 text-white" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"}`}
           >
             <FaBox /> Produktet
+          </button>
+          <button
+            onClick={() => setTab("statistikat")}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition ${tab === "statistikat" ? "bg-green-600 text-white" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"}`}
+          >
+            <FaChartBar /> Statistikat
           </button>
         </div>
 
@@ -371,6 +377,114 @@ export default function AdminPanel() {
             </div>
           </div>
         )}
+        {/* TAB STATISTIKAT */}
+        {tab === "statistikat" && (() => {
+          const today = new Date().toDateString();
+          const thisMonth = new Date().getMonth();
+          const thisYear = new Date().getFullYear();
+
+          const totalRevenue = orders.reduce((s, o) => s + Number(o.total), 0);
+          const todayRevenue = orders
+            .filter((o) => new Date(o.created_at).toDateString() === today)
+            .reduce((s, o) => s + Number(o.total), 0);
+          const monthRevenue = orders
+            .filter((o) => {
+              const d = new Date(o.created_at);
+              return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
+            })
+            .reduce((s, o) => s + Number(o.total), 0);
+
+          const statusCounts = statusOptions.map((s) => ({
+            ...s,
+            count: orders.filter((o) => o.status === s.value).length,
+          }));
+          const maxStatus = Math.max(...statusCounts.map((s) => s.count), 1);
+
+          // Top produktet nga order_items
+          const productTotals: Record<string, { name: string; qty: number; revenue: number }> = {};
+          for (const order of orders) {
+            for (const item of order.order_items) {
+              if (!productTotals[item.name]) productTotals[item.name] = { name: item.name, qty: 0, revenue: 0 };
+              productTotals[item.name].qty += item.quantity;
+              productTotals[item.name].revenue += item.price * item.quantity;
+            }
+          }
+          const topProducts = Object.values(productTotals)
+            .sort((a, b) => b.revenue - a.revenue)
+            .slice(0, 5);
+          const maxRevenue = Math.max(...topProducts.map((p) => p.revenue), 1);
+
+          return (
+            <div className="space-y-6">
+              {/* Kartat e përmbledhjes */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {[
+                  { label: "Të ardhura totale", value: `${totalRevenue.toFixed(2)} €`, color: "text-green-600" },
+                  { label: "Këtë muaj", value: `${monthRevenue.toFixed(2)} €`, color: "text-blue-600" },
+                  { label: "Sot", value: `${todayRevenue.toFixed(2)} €`, color: "text-purple-600" },
+                  { label: "Total porosi", value: orders.length, color: "text-gray-700" },
+                  { label: "Total produkte", value: products.length, color: "text-gray-700" },
+                  { label: "Porosi sot", value: orders.filter((o) => new Date(o.created_at).toDateString() === today).length, color: "text-gray-700" },
+                ].map((card) => (
+                  <div key={card.label} className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
+                    <p className="text-xs text-gray-400 font-semibold uppercase mb-1">{card.label}</p>
+                    <p className={`text-2xl font-bold ${card.color}`}>{card.value}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Porosi sipas statusit */}
+              <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+                <p className="text-sm font-semibold text-gray-700 mb-4">Porosi sipas statusit</p>
+                <div className="space-y-3">
+                  {statusCounts.map((s) => (
+                    <div key={s.value}>
+                      <div className="flex justify-between text-xs text-gray-500 mb-1">
+                        <span>{s.label}</span>
+                        <span className="font-semibold">{s.count}</span>
+                      </div>
+                      <div className="w-full bg-gray-100 rounded-full h-2.5">
+                        <div
+                          className="h-2.5 rounded-full transition-all duration-500"
+                          style={{
+                            width: `${(s.count / maxStatus) * 100}%`,
+                            backgroundColor: s.value === "delivered" ? "#16a34a" : s.value === "pending" ? "#ca8a04" : s.value === "confirmed" ? "#2563eb" : "#dc2626",
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Top 5 produktet */}
+              <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+                <p className="text-sm font-semibold text-gray-700 mb-4">Top 5 produktet (nga të ardhurat)</p>
+                {topProducts.length === 0 ? (
+                  <p className="text-sm text-gray-400 text-center py-4">Ende nuk ka të dhëna.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {topProducts.map((p, i) => (
+                      <div key={p.name}>
+                        <div className="flex justify-between text-xs text-gray-500 mb-1">
+                          <span><span className="font-bold text-gray-700 mr-1">#{i + 1}</span>{p.name}</span>
+                          <span className="font-semibold text-green-600">{p.revenue.toFixed(2)} €</span>
+                        </div>
+                        <div className="w-full bg-gray-100 rounded-full h-2.5">
+                          <div
+                            className="h-2.5 rounded-full bg-green-500 transition-all duration-500"
+                            style={{ width: `${(p.revenue / maxRevenue) * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })()}
+
       </div>
     </section>
   );
