@@ -92,6 +92,7 @@ export default function Checkout() {
           toEmail: user.email,
           emri,
           mbiemri,
+          telefon,
           orderId: order.id,
           items: state.items,
           total,
