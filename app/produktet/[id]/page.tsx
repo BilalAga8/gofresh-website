@@ -4,7 +4,13 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { FaArrowLeft, FaHeart, FaRegHeart, FaShoppingCart, FaCheckCircle } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaHeart,
+  FaRegHeart,
+  FaShoppingCart,
+  FaCheckCircle,
+} from "react-icons/fa";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 import { supabase } from "../../lib/supabase";
@@ -77,27 +83,26 @@ export default function ProductPage() {
 
     dispatch({
       type: "ADD_ITEM",
-      payload: {
-        id: product.id,
-        name: product.name,
-        price: finalPrice,
-        quantity,
-        image: product.image,
-      },
+      payload: { id: product.id, name: product.name, price: finalPrice, quantity, image: product.image },
     });
 
     setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+    setTimeout(() => setAdded(false), 3000);
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white">
-        <div className="h-80 bg-gray-100 animate-pulse" />
-        <div className="p-5 space-y-4">
-          <div className="h-7 bg-gray-100 rounded-lg animate-pulse w-3/4" />
-          <div className="h-5 bg-gray-100 rounded-lg animate-pulse w-1/3" />
-          <div className="h-20 bg-gray-100 rounded-lg animate-pulse" />
+      <div className="min-h-screen bg-gray-50 pt-16 md:pt-24">
+        <div className="max-w-5xl mx-auto md:px-6">
+          <div className="md:grid md:grid-cols-2 md:gap-8">
+            <div className="h-72 md:h-96 bg-gray-200 animate-pulse md:rounded-2xl" />
+            <div className="p-5 space-y-4">
+              <div className="h-6 bg-gray-200 rounded animate-pulse w-1/3" />
+              <div className="h-8 bg-gray-200 rounded animate-pulse w-3/4" />
+              <div className="h-10 bg-gray-200 rounded animate-pulse w-1/2" />
+              <div className="h-24 bg-gray-200 rounded animate-pulse" />
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -108,155 +113,200 @@ export default function ProductPage() {
   const discountedPrice = product.discount > 0
     ? (product.price * (1 - product.discount / 100)).toFixed(2)
     : null;
-
   const finalPrice = discountedPrice ?? product.price.toFixed(2);
+  const runningTotal = (Number.parseFloat(finalPrice) * quantity).toFixed(2);
 
   return (
-    <div className="min-h-screen bg-white pb-28">
+    <div className="min-h-screen bg-gray-50 pt-16 md:pt-24 pb-28 md:pb-12">
+      <div className="max-w-5xl mx-auto md:px-6 md:py-6">
 
-      {/* Image Section */}
-      <div className="relative w-full bg-gray-50" style={{ minHeight: "320px" }}>
-        {/* Back button */}
-        <button
-          onClick={() => router.back()}
-          className="absolute top-14 left-4 z-10 w-9 h-9 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-md"
-        >
-          <FaArrowLeft className="text-gray-700 text-sm" />
-        </button>
-
-        {/* Favorite button */}
-        <button
-          onClick={toggleFavorite}
-          className="absolute top-14 right-4 z-10 w-9 h-9 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-md"
-        >
-          {isFav
-            ? <FaHeart className="text-red-500" />
-            : <FaRegHeart className="text-gray-500" />
-          }
-        </button>
-
-        {/* Discount badge */}
-        {product.discount > 0 && (
-          <span className="absolute top-14 left-1/2 -translate-x-1/2 z-10 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow">
-            -{product.discount}%
-          </span>
-        )}
-
-        {product.image ? (
-          <Image
-            src={product.image}
-            alt={product.name}
-            width={800}
-            height={400}
-            className="w-full object-cover"
-            style={{ maxHeight: "380px" }}
-            priority
-          />
-        ) : (
-          <div className="w-full flex items-center justify-center text-gray-300 text-6xl" style={{ height: "320px" }}>
-            🥬
-          </div>
-        )}
-      </div>
-
-      {/* Content */}
-      <div className="px-5 pt-5">
-
-        {/* Category pill */}
+        {/* Desktop: kthehu mbrapa */}
         <Link
-          href={`/produktet?category=${product.category}`}
-          className="inline-block text-xs font-semibold text-green-600 bg-green-50 border border-green-200 px-3 py-1 rounded-full mb-3 capitalize"
+          href="/produktet"
+          className="hidden md:inline-flex items-center gap-2 text-sm text-gray-500 hover:text-green-600 transition mb-5"
         >
-          {product.category}
+          <FaArrowLeft className="text-xs" /> Kthehu te produktet
         </Link>
 
-        {/* Title */}
-        <h1 className="text-2xl font-bold text-gray-900 mb-2 leading-tight">{product.name}</h1>
+        <div className="md:grid md:grid-cols-2 md:gap-8 md:bg-white md:rounded-2xl md:shadow-sm md:border md:border-gray-100 md:overflow-hidden">
 
-        {/* Price */}
-        <div className="flex items-baseline gap-3 mb-4">
-          <span className="text-3xl font-extrabold text-green-600">{finalPrice} €</span>
-          {discountedPrice && (
-            <span className="text-base text-gray-400 line-through">{product.price.toFixed(2)} €</span>
-          )}
-          {discountedPrice && (
-            <span className="text-sm font-semibold text-red-500 bg-red-50 px-2 py-0.5 rounded-full">
-              -{product.discount}% zbritje
-            </span>
-          )}
+          {/* ── Foto ── */}
+          <div className="relative bg-white">
+            {/* Mobile: back + fav butona mbi foto */}
+            <div className="md:hidden absolute top-3 left-3 right-3 flex justify-between z-10">
+              <button
+                onClick={() => router.back()}
+                className="w-9 h-9 bg-white/90 backdrop-blur rounded-full shadow flex items-center justify-center"
+              >
+                <FaArrowLeft className="text-gray-700 text-sm" />
+              </button>
+              <button
+                onClick={toggleFavorite}
+                className="w-9 h-9 bg-white/90 backdrop-blur rounded-full shadow flex items-center justify-center"
+              >
+                {isFav ? <FaHeart className="text-red-500" /> : <FaRegHeart className="text-gray-500" />}
+              </button>
+            </div>
+
+            {product.discount > 0 && (
+              <span className="absolute top-3 left-1/2 -translate-x-1/2 z-10 md:left-3 md:translate-x-0 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                -{product.discount}%
+              </span>
+            )}
+
+            {product.image ? (
+              <Image
+                src={product.image}
+                alt={product.name}
+                width={700}
+                height={500}
+                className="w-full object-cover"
+                style={{ height: "300px" }}
+                priority
+              />
+            ) : (
+              <div className="w-full flex items-center justify-center text-gray-200 text-7xl bg-gray-50" style={{ height: "300px" }}>
+                🥬
+              </div>
+            )}
+
+            {/* Desktop: fav buton mbi foto djathtas */}
+            <button
+              onClick={toggleFavorite}
+              className="hidden md:flex absolute top-4 right-4 w-10 h-10 bg-white rounded-full shadow items-center justify-center hover:scale-110 transition"
+            >
+              {isFav ? <FaHeart className="text-red-500" /> : <FaRegHeart className="text-gray-400" />}
+            </button>
+          </div>
+
+          {/* ── Detajet ── */}
+          <div className="px-5 pt-5 pb-4 md:p-8 md:flex md:flex-col md:justify-between">
+            <div>
+              {/* Kategoria */}
+              <Link
+                href={`/produktet?category=${product.category}`}
+                className="inline-block text-xs font-semibold text-green-600 bg-green-50 border border-green-200 px-3 py-1 rounded-full mb-3 capitalize hover:bg-green-100 transition"
+              >
+                {product.category}
+              </Link>
+
+              {/* Emri */}
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 leading-tight">
+                {product.name}
+              </h1>
+
+              {/* Çmimi */}
+              <div className="flex items-baseline gap-3 mb-5">
+                <span className="text-3xl font-extrabold text-green-600">{finalPrice} €</span>
+                {discountedPrice && (
+                  <>
+                    <span className="text-base text-gray-400 line-through">{product.price.toFixed(2)} €</span>
+                    <span className="text-xs font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full">
+                      -{product.discount}%
+                    </span>
+                  </>
+                )}
+              </div>
+
+              {/* Highlights */}
+              <div className="bg-green-50 rounded-xl p-4 mb-5 space-y-2">
+                {[
+                  "Produkt i freskët direkt nga ferma",
+                  "Dërgesa brenda 24 orëve",
+                  "Cilësi e garantuar",
+                ].map((text) => (
+                  <div key={text} className="flex items-center gap-2 text-sm text-gray-700">
+                    <FaCheckCircle className="text-green-500 shrink-0" />
+                    <span>{text}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Përshkrimi */}
+              {product.description && (
+                <p className="text-gray-500 text-sm leading-relaxed mb-5">{product.description}</p>
+              )}
+
+              {/* Sasia */}
+              <div className="mb-6">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">Sasia</p>
+                <div className="flex items-center w-fit border border-gray-200 rounded-xl overflow-hidden">
+                  <button
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    className="w-11 h-11 bg-gray-50 hover:bg-gray-100 text-xl font-bold text-gray-600 transition"
+                  >
+                    −
+                  </button>
+                  <span className="w-11 h-11 flex items-center justify-center text-lg font-bold text-gray-900 border-x border-gray-200">
+                    {quantity}
+                  </span>
+                  <button
+                    onClick={() => setQuantity((q) => q + 1)}
+                    className="w-11 h-11 bg-gray-50 hover:bg-gray-100 text-xl font-bold text-gray-600 transition"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Desktop: butoni i shportës */}
+            <div className="hidden md:block">
+              {added ? (
+                <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-5 py-4">
+                  <FaCheckCircle className="text-green-500 text-xl shrink-0" />
+                  <div>
+                    <p className="font-semibold text-green-700 text-sm">U shtua në shportë!</p>
+                    <Link href="/cart" className="text-green-600 text-xs font-bold hover:underline">
+                      Shko te shporta →
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={handleAddToCart}
+                  className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl transition active:scale-95 text-base"
+                >
+                  <FaShoppingCart />
+                  Shto në shportë — {runningTotal} €
+                </button>
+              )}
+            </div>
+          </div>
         </div>
+      </div>
 
-        {/* Highlights */}
-        <div className="bg-green-50 rounded-2xl p-4 mb-5 space-y-2">
-          <div className="flex items-center gap-2 text-sm text-gray-700">
-            <FaCheckCircle className="text-green-500 shrink-0" />
-            <span>Produkt i freskët direkt nga ferma</span>
+      {/* ── Mobile: CTA i ngjitur poshtë ── */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-3 z-50 shadow-[0_-4px_16px_rgba(0,0,0,0.07)]">
+        {added ? (
+          <div className="flex items-center justify-between gap-3 bg-green-50 border border-green-200 rounded-2xl px-4 py-3">
+            <div className="flex items-center gap-2">
+              <FaCheckCircle className="text-green-500 text-lg" />
+              <span className="font-semibold text-green-700 text-sm">U shtua!</span>
+            </div>
+            <Link
+              href="/cart"
+              className="bg-green-600 text-white text-sm font-bold px-5 py-2 rounded-xl active:scale-95 transition"
+            >
+              Shko te shporta →
+            </Link>
           </div>
-          <div className="flex items-center gap-2 text-sm text-gray-700">
-            <FaCheckCircle className="text-green-500 shrink-0" />
-            <span>Dërgesa brenda 24 orëve</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-gray-700">
-            <FaCheckCircle className="text-green-500 shrink-0" />
-            <span>Cilësi e garantuar</span>
-          </div>
-        </div>
-
-        {/* Description */}
-        {product.description && (
-          <div className="mb-5">
-            <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-2">Përshkrimi</h2>
-            <p className="text-gray-600 text-sm leading-relaxed">{product.description}</p>
+        ) : (
+          <div className="flex items-center gap-3">
+            <div>
+              <p className="text-xs text-gray-400">Totali</p>
+              <p className="text-lg font-extrabold text-green-600">{runningTotal} €</p>
+            </div>
+            <button
+              onClick={handleAddToCart}
+              className="flex-1 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-2xl transition active:scale-95"
+            >
+              <FaShoppingCart />
+              Shto në shportë
+            </button>
           </div>
         )}
-
-        {/* Quantity selector */}
-        <div className="mb-6">
-          <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">Sasia</h2>
-          <div className="flex items-center gap-0 w-fit border border-gray-200 rounded-xl overflow-hidden">
-            <button
-              onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-              className="w-12 h-12 bg-gray-50 hover:bg-gray-100 text-xl font-bold text-gray-700 transition flex items-center justify-center"
-            >
-              −
-            </button>
-            <span className="w-12 h-12 flex items-center justify-center text-xl font-bold text-gray-900 border-x border-gray-200">
-              {quantity}
-            </span>
-            <button
-              onClick={() => setQuantity((q) => q + 1)}
-              className="w-12 h-12 bg-gray-50 hover:bg-gray-100 text-xl font-bold text-gray-700 transition flex items-center justify-center"
-            >
-              +
-            </button>
-          </div>
-        </div>
-
       </div>
-
-      {/* Fixed bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-5 py-4 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
-        <div className="max-w-lg mx-auto flex items-center gap-3">
-          <div className="text-left">
-            <p className="text-xs text-gray-400">Totali</p>
-            <p className="text-xl font-extrabold text-green-600">
-              {(Number.parseFloat(finalPrice) * quantity).toFixed(2)} €
-            </p>
-          </div>
-          <button
-            onClick={handleAddToCart}
-            className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-base transition active:scale-95 ${
-              added
-                ? "bg-green-500 text-white"
-                : "bg-green-600 hover:bg-green-700 text-white"
-            }`}
-          >
-            <FaShoppingCart className="text-lg" />
-            {added ? "U shtua!" : `Shto në shportë`}
-          </button>
-        </div>
-      </div>
-
     </div>
   );
 }
