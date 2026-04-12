@@ -39,10 +39,10 @@ export async function POST(req: Request) {
     if (!info) return NextResponse.json({ success: false, error: "Status i panjohur" }, { status: 400 });
 
     const html = `
-      <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+      <div lang="sq" style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
 
         <div style="background:linear-gradient(135deg,#16a34a,#4ade80);padding:32px 24px;text-align:center;">
-          <h1 style="color:#ffffff;margin:0;font-size:24px;">🌱 Ferma Fresh</h1>
+          <h1 style="color:#ffffff;margin:0;font-size:24px;" translate="no">🌱 Ferma Fresh</h1>
           <p style="color:rgba(255,255,255,0.85);margin:8px 0 0;font-size:14px;">Përditësim Porosie</p>
         </div>
 
