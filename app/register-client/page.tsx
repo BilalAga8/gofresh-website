@@ -30,6 +30,11 @@ export default function ClientRegister() {
       return;
     }
 
+    if (!/^[A-Za-z]\d{8}[A-Za-z]$/.test(nipt)) {
+      setError("NIPT-i duhet të jetë në formatin: 1 shkronjë + 8 numra + 1 shkronjë (p.sh. M12345678A)");
+      return;
+    }
+
     setLoading(true);
 
     const { data, error: signUpError } = await supabase.auth.signUp({
@@ -60,7 +65,7 @@ export default function ClientRegister() {
     }
 
     setLoading(false);
-    router.replace("/login-client");
+    router.replace("/produktet");
   };
 
   return (
@@ -72,7 +77,7 @@ export default function ClientRegister() {
       <form onSubmit={handleRegister} className="space-y-4">
         <input type="text" placeholder="Emri" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full border rounded px-3 py-2" />
         <input type="text" placeholder="Mbiemri" value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full border rounded px-3 py-2" />
-        <input type="text" placeholder="Numri NIPT" value={nipt} onChange={(e) => setNipt(e.target.value)} className="w-full border rounded px-3 py-2" />
+        <input type="text" placeholder="Numri NIPT (p.sh. M12345678A)" value={nipt} onChange={(e) => setNipt(e.target.value.toUpperCase())} className="w-full border rounded px-3 py-2" maxLength={10} />
         <input type="text" placeholder="Numri i Telefonit" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full border rounded px-3 py-2" />
         <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full border rounded px-3 py-2" />
         <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full border rounded px-3 py-2" />
