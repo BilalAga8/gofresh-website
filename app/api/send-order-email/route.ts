@@ -91,7 +91,7 @@ export async function POST(req: Request) {
 
     // Email për klientin
     const { error } = await resend.emails.send({
-      from: "Agro Fresh <onboarding@resend.dev>",
+      from: "Ferma Fresh <noreply@fermafresh.com>",
       to: toEmail,
       subject: `✅ Porosia #${orderId.slice(0, 8).toUpperCase()} u konfirmua — Agro Fresh`,
       html,
@@ -134,7 +134,7 @@ export async function POST(req: Request) {
     `;
 
     await resend.emails.send({
-      from: "Agro Fresh <onboarding@resend.dev>",
+      from: "Ferma Fresh <noreply@fermafresh.com>",
       to: ADMIN_EMAIL,
       subject: `🛒 Porosi e re #${orderId.slice(0, 8).toUpperCase()} — ${emri} ${mbiemri}`,
       html: adminHtml,

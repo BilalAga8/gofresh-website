@@ -51,6 +51,12 @@ export default function ClientRegister() {
         telefon: phone,
         nipt,
       });
+
+      await fetch("/api/send-welcome-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ toEmail: email, emri: firstName, mbiemri: lastName }),
+      });
     }
 
     setLoading(false);
