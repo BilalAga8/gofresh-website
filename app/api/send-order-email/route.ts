@@ -40,7 +40,7 @@ export async function POST(req: Request) {
       <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
 
         <div style="background:linear-gradient(135deg,#16a34a,#4ade80);padding:32px 24px;text-align:center;">
-          <h1 style="color:#ffffff;margin:0;font-size:24px;">🌱 Agro Fresh</h1>
+          <h1 style="color:#ffffff;margin:0;font-size:24px;">🌱 Ferma Fresh</h1>
           <p style="color:rgba(255,255,255,0.85);margin:8px 0 0;font-size:14px;">Porosia juaj u konfirmua!</p>
         </div>
 
@@ -82,7 +82,7 @@ export async function POST(req: Request) {
         </div>
 
         <div style="background:#f9fafb;padding:16px;text-align:center;border-top:1px solid #f0f0f0;">
-          <p style="margin:0;font-size:12px;color:#9ca3af;">© 2026 Agro Fresh. Tiranë, Shqipëri.</p>
+          <p style="margin:0;font-size:12px;color:#9ca3af;">© 2026 Ferma Fresh. Shqipëri.</p>
         </div>
       </div>
     `;
@@ -93,7 +93,7 @@ export async function POST(req: Request) {
     const { error } = await resend.emails.send({
       from: "Ferma Fresh <noreply@fermafresh.com>",
       to: toEmail,
-      subject: `✅ Porosia #${orderId.slice(0, 8).toUpperCase()} u konfirmua — Agro Fresh`,
+      subject: `✅ Porosia #${orderId.slice(0, 8).toUpperCase()} u konfirmua — Ferma Fresh`,
       html,
     });
 
@@ -106,7 +106,7 @@ export async function POST(req: Request) {
       <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
         <div style="background:#111827;padding:24px;text-align:center;">
           <h1 style="color:#4ade80;margin:0;font-size:20px;">🛒 Porosi e Re!</h1>
-          <p style="color:#9ca3af;margin:6px 0 0;font-size:13px;">Agro Fresh — Panel Admin</p>
+          <p style="color:#9ca3af;margin:6px 0 0;font-size:13px;">Ferma Fresh — Panel Admin</p>
         </div>
         <div style="padding:24px;">
           <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:16px;margin-bottom:20px;">

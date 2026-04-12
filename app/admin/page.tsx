@@ -34,6 +34,7 @@ interface Order {
   telefon: string;
   adresa: string;
   shenime: string;
+  email: string | null;
   order_items: OrderItem[];
 }
 
@@ -95,6 +96,21 @@ export default function AdminPanel() {
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     await supabase.from("orders").update({ status: newStatus }).eq("id", orderId);
     setOrders((prev) => prev.map((o) => o.id === orderId ? { ...o, status: newStatus } : o));
+
+    const order = orders.find((o) => o.id === orderId);
+    if (order?.email && ["confirmed", "delivered", "cancelled"].includes(newStatus)) {
+      await fetch("/api/send-status-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          toEmail: order.email,
+          emri: order.emri,
+          mbiemri: order.mbiemri,
+          orderId: order.id,
+          status: newStatus,
+        }),
+      });
+    }
   };
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {

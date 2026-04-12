@@ -63,6 +63,7 @@ export default function Checkout() {
         telefon,
         adresa,
         shenime,
+        email: user?.email ?? null,
       })
       .select()
       .single();
