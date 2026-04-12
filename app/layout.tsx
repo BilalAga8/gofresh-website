@@ -11,6 +11,12 @@ const BASE_URL = "https://gofresh-website.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Agro Fresh",
+  },
   title: {
     default: "Agro Fresh - Produkte të Freskëta nga Ferma",
     template: "%s | Agro Fresh",
@@ -61,6 +67,23 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="sq">
+      <head>
+        <meta name="application-name" content="Agro Fresh" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="theme-color" content="#16a34a" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js');
+                });
+              }
+            `,
+          }}
+        />
+      </head>
       <body className="min-h-screen flex flex-col">
         <AuthProvider>
           <CartProvider>
