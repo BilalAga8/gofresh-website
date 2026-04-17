@@ -45,10 +45,6 @@ function ProductList({ title, category: initialCategory, onlyDiscounted = false 
   const [sort, setSort] = useState("default");
 
   useEffect(() => {
-    setActiveCategory(initialCategory ?? "");
-  }, [initialCategory]);
-
-  useEffect(() => {
     async function fetchProducts() {
       const { data } = await supabase.from("products").select("*");
       if (data) {
@@ -63,10 +59,11 @@ function ProductList({ title, category: initialCategory, onlyDiscounted = false 
   }, []);
 
   useEffect(() => {
-    if (!user) { setFavorites(new Set()); return; }
+    if (!user) return;
     supabase.from("favorites").select("product_id").eq("user_id", user.id).then(({ data }) => {
       if (data) setFavorites(new Set(data.map((f) => f.product_id)));
     });
+    return () => setFavorites(new Set());
   }, [user]);
 
   const filtered = useMemo(() => {

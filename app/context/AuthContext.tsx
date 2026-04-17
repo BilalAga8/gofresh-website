@@ -32,15 +32,12 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAdmin, setIsAdminState] = useState<boolean>(false);
-  const [adminLoading, setAdminLoading] = useState<boolean>(true);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [adminLoading] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    setIsAdminState(localStorage.getItem("isAdmin") === "true");
-    setAdminLoading(false);
-
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setAuthLoading(false);
@@ -52,11 +49,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     return () => subscription.unsubscribe();
   }, []);
-
-  const setIsAdmin = (value: boolean) => {
-    localStorage.setItem("isAdmin", String(value));
-    setIsAdminState(value);
-  };
 
   const logout = async () => {
     await supabase.auth.signOut();
@@ -73,7 +65,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       logout,
       authLoading,
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [isAdmin, adminLoading, user, authLoading]
   );
 

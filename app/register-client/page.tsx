@@ -31,7 +31,7 @@ export default function ClientRegister() {
     }
 
     if (!/^[A-Za-z]\d{8}[A-Za-z]$/.test(nipt)) {
-      setError("NIPT-i duhet të jetë në formatin: 1 shkronjë + 8 numra + 1 shkronjë (p.sh. M12345678A)");
+      setError("NIPT-i duhet të jetë në formatin: (p.sh. M12345678A)");
       return;
     }
 

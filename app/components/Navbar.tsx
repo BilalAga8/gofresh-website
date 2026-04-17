@@ -133,7 +133,6 @@ function Navbar() {
   const [loginLoading, setLoginLoading] = useState(false);
 
   const desktopDropdownRef = useRef<HTMLLIElement>(null);
-  const mobileDropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -148,25 +147,11 @@ function Navbar() {
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       const target = e.target as Node;
-      const outsideDesktop = !desktopDropdownRef.current?.contains(target);
-      const outsideMobile = !mobileDropdownRef.current?.contains(target);
-      if (outsideDesktop && outsideMobile) setIsLoginOpen(false);
+      if (!desktopDropdownRef.current?.contains(target)) setIsLoginOpen(false);
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  // Mbyll dropdown kur logon me sukses (pa setState direkt në effect)
-  const wasLoggedIn = useRef(isClientLoggedIn);
-  useEffect(() => {
-    if (!wasLoggedIn.current && isClientLoggedIn) {
-      setIsLoginOpen(false);
-      setEmail("");
-      setPassword("");
-      setLoginError("");
-    }
-    wasLoggedIn.current = isClientLoggedIn;
-  }, [isClientLoggedIn]);
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "";
@@ -211,6 +196,9 @@ function Navbar() {
     } else {
       clearRateLimit(rlKey);
       setIsAdmin(false);
+      setIsLoginOpen(false);
+      setEmail("");
+      setPassword("");
     }
     setLoginLoading(false);
   };
@@ -262,6 +250,11 @@ function Navbar() {
             <li>
               <Link href="/produktet" className="hover:text-green-400">
                 Produktet
+              </Link>
+            </li>
+            <li>
+              <Link href="/faq" className="hover:text-green-400">
+                FAQ
               </Link>
             </li>
             <li className="relative">
@@ -330,20 +323,13 @@ function Navbar() {
             )}
 
             {!authLoading && !isClientLoggedIn && (
-              <div ref={mobileDropdownRef} className="relative">
-                <button
-                  onClick={() => setIsLoginOpen((v) => !v)}
-                  className="text-xl hover:text-green-400"
-                  aria-label="Hyrje"
-                >
-                  <FaUser />
-                </button>
-                {isLoginOpen && (
-                  <div className="absolute right-0 top-10 w-72">
-                    <LoginForm {...loginFormProps} compact />
-                  </div>
-                )}
-              </div>
+              <Link
+                href="/login-client"
+                className="text-xl hover:text-green-400"
+                aria-label="Hyrje"
+              >
+                <FaUser />
+              </Link>
             )}
 
             <Link
@@ -365,12 +351,9 @@ function Navbar() {
       {/* Sidebar overlay */}
       {isOpen && (
         <div
-          role="button"
-          tabIndex={0}
-          aria-label="Mbyll menunë"
+          aria-hidden="true"
           className="fixed inset-0 bg-black/50 z-40 md:hidden"
           onClick={() => setIsOpen(false)}
-          onKeyDown={(e) => e.key === "Escape" && setIsOpen(false)}
         />
       )}
 
@@ -398,6 +381,7 @@ function Navbar() {
             { href: "/", label: "HOME" },
             { href: "/about", label: "RRETH NESH" },
             { href: "/produktet", label: "PRODUKTET" },
+            { href: "/faq", label: "FAQ" },
             {
               href: "/cart",
               label: totalItems > 0 ? `SHPORTA (${totalItems})` : "SHPORTA",

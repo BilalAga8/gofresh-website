@@ -49,7 +49,7 @@ type Tab = "produktet" | "porosite" | "statistikat";
 
 export default function AdminPanel() {
   const router = useRouter();
-  const { isAdmin, setIsAdmin, adminLoading } = useAuth();
+  const { isAdmin, setIsAdmin } = useAuth();
   const [tab, setTab] = useState<Tab>("porosite");
 
   // Produktet
@@ -70,16 +70,6 @@ export default function AdminPanel() {
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState("all");
 
-  useEffect(() => {
-    if (adminLoading) return;
-    if (isAdmin) {
-      fetchProducts();
-      fetchOrders();
-    } else {
-      router.replace("/login-admin");
-    }
-  }, [isAdmin, adminLoading, router]);
-
   async function fetchProducts() {
     const { data } = await supabase.from("products").select("*").order("created_at", { ascending: false });
     if (data) setProducts(data);
@@ -90,8 +80,15 @@ export default function AdminPanel() {
       .from("orders")
       .select("*, order_items(*)")
       .order("created_at", { ascending: false });
-    if (data) setOrders(data);
+    if (data) setOrders([...data]);
   }
+
+  useEffect(() => {
+    supabase.from("products").select("*").order("created_at", { ascending: false })
+      .then(({ data }) => { if (data) setProducts(data); });
+    supabase.from("orders").select("*, order_items(*)").order("created_at", { ascending: false })
+      .then(({ data }) => { if (data) setOrders([...data]); });
+  }, []);
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     await supabase.from("orders").update({ status: newStatus }).eq("id", orderId);
@@ -156,7 +153,11 @@ export default function AdminPanel() {
     const file = e.dataTransfer.files?.[0];
     if (file) uploadImage(file);
   };
-  const handleLogout = () => { setIsAdmin(false); router.replace("/"); };
+  const handleLogout = async () => {
+    await fetch("/api/admin-logout", { method: "POST" });
+    setIsAdmin(false);
+    router.replace("/");
+  };
 
   if (!isAdmin) return null;
 
@@ -257,7 +258,7 @@ export default function AdminPanel() {
                               <p className="text-sm text-gray-700">{order.emri} {order.mbiemri}</p>
                               <p className="text-sm text-gray-700">📞 {order.telefon}</p>
                               <p className="text-sm text-gray-700">📍 {order.adresa}</p>
-                              {order.shenime && <p className="text-sm text-gray-500 italic mt-1">"{order.shenime}"</p>}
+                              {order.shenime && <p className="text-sm text-gray-500 italic mt-1">&quot;{order.shenime}&quot;</p>}
                             </div>
                             <div>
                               <p className="text-xs text-gray-400 font-semibold uppercase mb-1">Produktet</p>
