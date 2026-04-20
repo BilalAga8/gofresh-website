@@ -7,7 +7,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ToastMessage from "./components/ToastMessage";
 
-const BASE_URL = "https://gofresh-website.vercel.app";
+const BASE_URL = "https://fermafresh.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
