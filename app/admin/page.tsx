@@ -49,7 +49,7 @@ type Tab = "produktet" | "porosite" | "statistikat";
 
 export default function AdminPanel() {
   const router = useRouter();
-  const { isAdmin, setIsAdmin } = useAuth();
+  const { isAdmin, setIsAdmin, adminLoading } = useAuth();
   const [tab, setTab] = useState<Tab>("porosite");
 
   // Produktet
@@ -159,6 +159,7 @@ export default function AdminPanel() {
     router.replace("/");
   };
 
+  if (adminLoading) return null;
   if (!isAdmin) return null;
 
   const filteredOrders = filterStatus === "all" ? orders : orders.filter((o) => o.status === filterStatus);

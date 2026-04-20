@@ -33,11 +33,19 @@ const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const [adminLoading] = useState<boolean>(false);
+  const [adminLoading, setAdminLoading] = useState<boolean>(true);
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    fetch("/api/admin-check")
+      .then((r) => r.json())
+      .then(({ isAdmin: admin }) => {
+        setIsAdmin(admin);
+        setAdminLoading(false);
+      })
+      .catch(() => setAdminLoading(false));
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setAuthLoading(false);
