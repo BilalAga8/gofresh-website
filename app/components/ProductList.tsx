@@ -189,11 +189,13 @@ function ProductList({ title, category: initialCategory, onlyDiscounted = false 
 
                 <Link href={`/produktet/${item.id}`} className="block">
                   {item.image ? (
-                    <Image src={item.image} alt={item.name} width={400} height={160} className="rounded-lg mb-3 w-full h-40 object-cover" />
+                    <div className="relative w-full h-40 rounded-2xl mb-3 overflow-hidden">
+                      <Image src={item.image} alt={item.name} fill className="object-cover" />
+                    </div>
                   ) : (
                     <div className="rounded-lg mb-3 w-full h-40 bg-gray-100 flex items-center justify-center text-gray-400 text-sm">Pa foto</div>
                   )}
-                  <h3 className="text-base font-semibold text-green-700 hover:text-green-500 transition">{item.name}</h3>
+                  <h3 className="text-base font-semibold text-gray-800 hover:text-gray-600 transition">{item.name}</h3>
                 </Link>
                 {discountedPrice ? (
                   <div className="mt-1 mb-3">
@@ -228,7 +230,7 @@ function ProductList({ title, category: initialCategory, onlyDiscounted = false 
                       image: item.image,
                     },
                   })}
-                  className="mt-auto w-full py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 active:scale-95 transform transition text-sm font-semibold"
+                  className="mt-auto w-full py-2 bg-gradient-to-r from-green-500 to-green-700 text-white rounded-lg hover:from-green-600 hover:to-green-800 active:scale-95 transform transition text-sm font-semibold"
                 >
                   Shto në shportë
                 </button>

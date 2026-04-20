@@ -126,6 +126,7 @@ function Navbar() {
   );
 
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -151,6 +152,12 @@ function Navbar() {
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
@@ -216,7 +223,7 @@ function Navbar() {
 
   return (
     <>
-      <nav className="sticky top-0 left-0 w-full bg-gray-800 text-white shadow-md z-50">
+      <nav className={`sticky top-0 left-0 w-full text-white z-50 transition-all duration-300 ${scrolled ? "bg-gray-800 shadow-md" : "bg-green-700"}`}>
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
           {/* Mobile: hamburger MAJTAS */}
           <button

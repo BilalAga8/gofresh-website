@@ -10,6 +10,7 @@ import {
   FaRegHeart,
   FaShoppingCart,
   FaCheckCircle,
+  FaStar,
 } from "react-icons/fa";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
@@ -38,6 +39,15 @@ export default function ProductPageClient() {
   const [isFav, setIsFav] = useState(false);
   const [added, setAdded] = useState(false);
 
+  type Review = { id: string; user_email: string; rating: number; comment: string; created_at: string };
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [reviewError, setReviewError] = useState("");
+  const [userReviewed, setUserReviewed] = useState(false);
+
   const id = typeof params.id === "string" ? params.id : params.id?.[0];
 
   useEffect(() => {
@@ -64,6 +74,45 @@ export default function ProductPageClient() {
       .single()
       .then(({ data }) => setIsFav(!!data));
   }, [user, id]);
+
+  useEffect(() => {
+    if (!id) return;
+    supabase.from("reviews").select("*").eq("product_id", id).order("created_at", { ascending: false })
+      .then(({ data }) => {
+        if (data) setReviews(data);
+      });
+  }, [id]);
+
+  useEffect(() => {
+    if (!user || !id || reviews.length === 0) return;
+    setUserReviewed(reviews.some((r) => r.user_email === user.email));
+  }, [user, id, reviews]);
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) { setReviewError("Duhet të hyni për të lënë vlerësim!"); return; }
+    if (rating === 0) { setReviewError("Zgjidhni numrin e yjeve!"); return; }
+    if (!comment.trim()) { setReviewError("Shkruani një koment!"); return; }
+    setReviewLoading(true);
+    setReviewError("");
+    const { error } = await supabase.from("reviews").insert({
+      product_id: id,
+      user_id: user.id,
+      user_email: user.email,
+      rating,
+      comment: comment.trim(),
+    });
+    if (error) {
+      setReviewError("Gabim gjatë dërgimit. Provoni përsëri.");
+    } else {
+      const { data } = await supabase.from("reviews").select("*").eq("product_id", id).order("created_at", { ascending: false });
+      if (data) setReviews(data);
+      setRating(0);
+      setComment("");
+      setUserReviewed(true);
+    }
+    setReviewLoading(false);
+  };
 
   const toggleFavorite = async () => {
     if (!user) { alert("Duhet të hyni për të ruajtur të preferuarat!"); return; }
@@ -273,6 +322,84 @@ export default function ProductPageClient() {
               )}
             </div>
           </div>
+        </div>
+
+        {/* Reviews */}
+        <div className="max-w-5xl mx-auto md:px-0 px-5 mt-8">
+          <h2 className="text-xl font-bold text-gray-800 mb-5">Vlerësimet</h2>
+
+          {/* Form */}
+          {!user ? (
+            <div className="bg-gray-50 border border-gray-200 rounded-2xl p-5 text-sm text-gray-500 text-center mb-6">
+              <Link href="/login-client" className="text-green-600 font-semibold hover:underline">Hyni</Link> për të lënë vlerësim.
+            </div>
+          ) : userReviewed ? (
+            <div className="bg-green-50 border border-green-200 rounded-2xl p-4 text-sm text-green-700 font-semibold mb-6 flex items-center gap-2">
+              <FaCheckCircle /> Ju e keni vlerësuar këtë produkt.
+            </div>
+          ) : (
+            <form onSubmit={handleReviewSubmit} className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm mb-6 space-y-4">
+              <div>
+                <p className="text-sm font-semibold text-gray-600 mb-2">Vlerësimi juaj</p>
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setRating(star)}
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(0)}
+                      className="text-2xl transition"
+                    >
+                      <FaStar className={(hoverRating || rating) >= star ? "text-yellow-400" : "text-gray-300"} />
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Shkruani mendimin tuaj..."
+                rows={3}
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-400 resize-none"
+              />
+              {reviewError && <p className="text-red-500 text-xs">{reviewError}</p>}
+              <button
+                type="submit"
+                disabled={reviewLoading}
+                className="bg-gradient-to-r from-green-500 to-green-700 text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:from-green-600 hover:to-green-800 transition disabled:opacity-50"
+              >
+                {reviewLoading ? "Duke dërguar..." : "Dërgo vlerësimin"}
+              </button>
+            </form>
+          )}
+
+          {/* Lista e reviews */}
+          {reviews.length === 0 ? (
+            <p className="text-gray-400 text-sm text-center py-6">Ende nuk ka vlerësime. Jini të parët!</p>
+          ) : (
+            <div className="space-y-3">
+              {reviews.map((r) => (
+                <div key={r.id} className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-green-100 text-green-700 text-xs font-bold flex items-center justify-center">
+                        {r.user_email[0].toUpperCase()}
+                      </div>
+                      <span className="text-sm font-semibold text-gray-700">{r.user_email.split("@")[0]}</span>
+                    </div>
+                    <div className="flex gap-0.5">
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <FaStar key={s} className={r.rating >= s ? "text-yellow-400 text-sm" : "text-gray-200 text-sm"} />
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600 leading-relaxed">{r.comment}</p>
+                  <p className="text-xs text-gray-400 mt-2">{new Date(r.created_at).toLocaleDateString("sq-AL", { day: "2-digit", month: "long", year: "numeric" })}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
